@@ -1,42 +1,31 @@
-import { User } from "../models/user.js";
 import { loginZodSchema, signupZodSchema } from "../schemas/user.js";
 import argon2 from "argon2";
 import jwtGenerate from "../utils/jwt.js";
-import isExist from "../utils/isExist.js";
+import findUserByEmail from "../utils/findUser.js";
+import { errorResponse } from "../utils/response.js";
+import { createUser } from "../services/userServices.js";
 
 const signup = async (req, res) => {
   try {
     const body = signupZodSchema.safeParse(req.body);
 
     if (!body.success) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid data.",
-      });
+      return errorResponse(res, 400, "Invalid data.");
     }
 
     const data = body.data;
 
     const name = data.name;
     const email = data.email;
-    const password = await argon2.hash(data.password);
+    const password = data.password;
 
-    const exist = await isExist(email);
+    const user = await findUserByEmail(email);
 
-    if (exist) {
-      return res.status(409).json({
-        success: false,
-        message: "User aalready exists",
-      });
+    if (user) {
+      return errorResponse(res, 409, "User already exists.");
     }
 
-    const user = new User({
-      name: name,
-      email: email,
-      password: password,
-    });
-
-    await user.save();
+    await createUser({ name, email, password });
 
     const token = jwtGenerate({ name, email });
 
@@ -44,7 +33,7 @@ const signup = async (req, res) => {
       httpOnly: true,
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: (24 * 60 * 60 * 1000) * 28,
     });
 
     return res.status(200).json({
@@ -56,11 +45,8 @@ const signup = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Something is up with our sever",
-    });
+    console.error("Signup Error:", error);
+    return errorResponse(res, 500, "Something is up with our sever.");
   }
 };
 
@@ -69,36 +55,29 @@ const login = async (req, res) => {
     const body = loginZodSchema.safeParse(req.body);
 
     if (!body.success) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid data.",
-      });
+      return errorResponse(res, 400, "Invalid data.");
     }
 
     const data = body.data;
 
     const email = data.email;
 
-    const exist = await isExist(email);
+    const user = await findUserByEmail(email);
 
-    if (!exist) {
-      return res.status(404).json({
-        success: false,
-        message: "User does not exist, please signup first.",
-      });
+    if (!user) {
+      return errorResponse(
+        res,
+        401,
+        "User does not exist, please signup first."
+      );
     }
 
-    const user = await User.findOne({ email: email });
+    const password = user.password;
 
-    const password = data.password;
-
-    const verify = await argon2.verify(user.password, password);
+    const verify = await argon2.verify(password, data.password);
 
     if (!verify) {
-      return res.status(401).json({
-        success: false,
-        message: "Wrong password.",
-      });
+      return errorResponse(res, 401, "Wrong password.");
     }
 
     const name = user.name;
@@ -109,23 +88,20 @@ const login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 24 * 60 * 30 * 1000,
+      maxAge: (24 * 60 * 60 * 1000) * 28,
     });
 
     return res.status(200).json({
-      success: true,
+      success: true, 
       message: "Login successfully.",
       user: {
-        name: user.name,
+        name: name,
         email: email,
       },
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Something is up with our sever",
-    });
+    console.error("Login Error:", error);
+    return errorResponse(res, 500, "Something is up with our sever.");
   }
 };
 
