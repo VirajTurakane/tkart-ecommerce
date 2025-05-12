@@ -15,9 +15,8 @@ const signup = async (req, res) => {
 
     const data = body.data;
 
-    const name = data.name;
+    const name = data.fname;
     const email = data.email;
-    const password = data.password;
 
     const user = await findUserByEmail(email);
 
@@ -25,18 +24,18 @@ const signup = async (req, res) => {
       return errorResponse(res, 409, "User already exists.");
     }
 
-    await createUser({ name, email, password });
+    await createUser(data);
 
     const token = jwtGenerate({ name, email });
 
-    res.cookie(process.env.JWT_NAME, token, {
+    res.cookie("token", token, {
       httpOnly: true,
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
-      maxAge: (24 * 60 * 60 * 1000) * 28,
+      maxAge: 24 * 60 * 60 * 1000 * 28,
     });
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       message: "Profile created successfully.",
       user: {
@@ -80,19 +79,19 @@ const login = async (req, res) => {
       return errorResponse(res, 401, "Wrong password.");
     }
 
-    const name = user.name;
+    const name = user.fname;
 
     const token = jwtGenerate({ name, email });
 
-    res.cookie(process.env.JWT_NAME, token, {
+    res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: (24 * 60 * 60 * 1000) * 28,
+      maxAge: 24 * 60 * 60 * 1000 * 28,
     });
 
     return res.status(200).json({
-      success: true, 
+      success: true,
       message: "Login successfully.",
       user: {
         name: name,

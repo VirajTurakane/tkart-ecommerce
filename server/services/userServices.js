@@ -1,13 +1,16 @@
 import argon2 from "argon2";
 import { User } from "../models/user.js";
 
-export const createUser = async ({ email, name, password }) => {
-  const hashed = await argon2.hash(password);
+export const createUser = async (data) => {
+  const hashed = await argon2.hash(data.password);
 
   const user = new User({
-    name: name,
-    email: email,
+    fname: data.fname,
+    lname: data.lname,
+    phone: data.phone,
+    email: data.email,
     password: hashed,
+    address: data.address,
   });
 
   return await user.save();
