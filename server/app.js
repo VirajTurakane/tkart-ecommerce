@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import { router as userRoutes } from "./routes/user.js";
 
 const app = express();
 
@@ -17,9 +18,6 @@ app.use(
 );
 
 // Routes
-// app.use()
-app.get("/", (req, res) => {
-    res.send("This is a home page.")
-})
+app.use("/api/v1/", userRoutes);
 
 export default app;
