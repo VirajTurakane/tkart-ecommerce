@@ -15,4 +15,11 @@ const fetchProducts = async (req, res) => {
   }
 };
 
-export { fetchProducts };
+const addProduct = (req, res) => {
+  const file = req.file?.path;
+  console.log(file);
+
+  res.send(file)
+};
+
+export { fetchProducts, addProduct };
