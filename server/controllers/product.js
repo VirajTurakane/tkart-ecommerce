@@ -4,13 +4,18 @@ import {
   uploadFile,
   uploadMultipleFiles,
 } from "../services/cloudinaryServices.js";
-import { productZodSchema } from "../schemas/product.js";
+import {
+  deleteProductZodSchema,
+  productZodSchema,
+} from "../schemas/product.js";
 import {
   serverError,
   invalidData,
   thumbnailError,
   productCreated,
   productNotFound,
+  productUpdated,
+  productDeleted,
 } from "../utils/constants/textConstants.js";
 
 const fetchProducts = async (req, res) => {
@@ -126,7 +131,7 @@ const updateProduct = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Product updated.",
+      message: productUpdated,
       updatedProduct,
     });
   } catch (error) {
@@ -135,4 +140,29 @@ const updateProduct = async (req, res) => {
   }
 };
 
-export { fetchProducts, addProduct, updateProduct };
+const deleteProduct = async (req, res) => {
+  try {
+    const body = deleteProductZodSchema.safeParse(req.body);
+
+    if (!body.success) {
+      return errorResponse(res, 400, invalidData);
+    }
+
+    const deletedProduct = await Product.findByIdAndDelete(body.data.id);
+
+    if (!deletedProduct) {
+      return errorResponse(res, 404, productNotFound);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: productDeleted,
+      deletedProduct,
+    });
+  } catch (error) {
+    console.log("Delete Product :", error);
+    return errorResponse(res, 500, serverError);
+  }
+};
+
+export { fetchProducts, addProduct, updateProduct, deleteProduct };

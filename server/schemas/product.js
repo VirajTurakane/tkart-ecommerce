@@ -14,4 +14,8 @@ const productZodSchema = z.object({
   variants: z.array(z.object({})).optional(),
 });
 
-export { productZodSchema };
+const deleteProductZodSchema = z.object({
+  id: z.string(),
+});
+
+export { productZodSchema, deleteProductZodSchema };
