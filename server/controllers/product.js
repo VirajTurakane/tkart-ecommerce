@@ -5,7 +5,12 @@ import {
   uploadMultipleFiles,
 } from "../services/cloudinaryServices.js";
 import { productZodSchema } from "../schemas/product.js";
-import { serverError, invalidData } from '../utils/constants/textConstants.js'
+import {
+  serverError,
+  invalidData,
+  thumbnailError,
+  productCreated,
+} from "../utils/constants/textConstants.js";
 
 const fetchProducts = async (req, res) => {
   try {
@@ -27,9 +32,6 @@ const addProduct = async (req, res) => {
     const images = req.files?.["images"];
     let imageURLs;
 
-    console.log("req.files :", req.files);
-    console.log("req.body:", req.body);
-
     const body = productZodSchema.safeParse(req.body);
 
     if (!body.success) {
@@ -38,10 +40,8 @@ const addProduct = async (req, res) => {
 
     const data = body.data;
 
-    // const data = req.body;
-
     if (!thumbnail) {
-      return errorResponse(res, 400, "Thumbnail file not uploaded.");
+      return errorResponse(res, 400, thumbnailError);
     }
 
     const url = await uploadFile(thumbnail.path);
@@ -66,7 +66,7 @@ const addProduct = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "Product created successfully.",
+      message: productCreated,
       product: savedProduct,
     });
   } catch (error) {
