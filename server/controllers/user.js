@@ -4,13 +4,23 @@ import jwtGenerate from "../utils/jwt.js";
 import findUserByEmail from "../utils/findUser.js";
 import { errorResponse } from "../utils/response.js";
 import { createUser } from "../services/userServices.js";
+import {
+  serverError,
+  invalidData,
+  profileCreated,
+  loginSuccess,
+  wrongPassword,
+  userNotExist,
+  userExists,
+} from "../utils/constants/textConstants.js";
+import { setTokenCookie } from "../utils/helpers/setTokenCookie.js";
 
 const signup = async (req, res) => {
   try {
     const body = signupZodSchema.safeParse(req.body);
 
     if (!body.success) {
-      return errorResponse(res, 400, "Invalid data.");
+      return errorResponse(res, 400, invalidData);
     }
 
     const data = body.data;
@@ -21,23 +31,18 @@ const signup = async (req, res) => {
     const user = await findUserByEmail(email);
 
     if (user) {
-      return errorResponse(res, 409, "User already exists.");
+      return errorResponse(res, 409, userExists);
     }
 
     await createUser(data);
 
     const token = jwtGenerate({ name, email });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "strict",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 24 * 60 * 60 * 1000 * 28,
-    });
+    setTokenCookie(token);
 
     return res.status(201).json({
       success: true,
-      message: "Profile created successfully.",
+      message: profileCreated,
       user: {
         name: name,
         email: email,
@@ -45,7 +50,7 @@ const signup = async (req, res) => {
     });
   } catch (error) {
     console.error("Signup Error:", error);
-    return errorResponse(res, 500, "Something is up with our sever.");
+    return errorResponse(res, 500, serverError);
   }
 };
 
@@ -54,7 +59,7 @@ const login = async (req, res) => {
     const body = loginZodSchema.safeParse(req.body);
 
     if (!body.success) {
-      return errorResponse(res, 400, "Invalid data.");
+      return errorResponse(res, 400, invalidData);
     }
 
     const data = body.data;
@@ -64,11 +69,7 @@ const login = async (req, res) => {
     const user = await findUserByEmail(email);
 
     if (!user) {
-      return errorResponse(
-        res,
-        401,
-        "User does not exist, please signup first."
-      );
+      return errorResponse(res, 401, userNotExist);
     }
 
     const password = user.password;
@@ -76,23 +77,18 @@ const login = async (req, res) => {
     const verify = await argon2.verify(password, data.password);
 
     if (!verify) {
-      return errorResponse(res, 401, "Wrong password.");
+      return errorResponse(res, 401, wrongPassword);
     }
 
     const name = user.fname;
 
     const token = jwtGenerate({ name, email });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 * 1000 * 28,
-    });
+    setTokenCookie(token);
 
     return res.status(200).json({
       success: true,
-      message: "Login successfully.",
+      message: loginSuccess,
       user: {
         name: name,
         email: email,
@@ -100,7 +96,7 @@ const login = async (req, res) => {
     });
   } catch (error) {
     console.error("Login Error:", error);
-    return errorResponse(res, 500, "Something is up with our sever.");
+    return errorResponse(res, 500, serverError);
   }
 };
 

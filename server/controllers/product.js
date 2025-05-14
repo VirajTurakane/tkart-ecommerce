@@ -5,6 +5,7 @@ import {
   uploadMultipleFiles,
 } from "../services/cloudinaryServices.js";
 import { productZodSchema } from "../schemas/product.js";
+import { serverError, invalidData } from '../utils/constants/textConstants.js'
 
 const fetchProducts = async (req, res) => {
   try {
@@ -16,7 +17,7 @@ const fetchProducts = async (req, res) => {
     });
   } catch (error) {
     console.error("Fetch Products Error:", error);
-    return errorResponse(res, 500, "Something is up with our server.");
+    return errorResponse(res, 500, serverError);
   }
 };
 
@@ -32,7 +33,7 @@ const addProduct = async (req, res) => {
     const body = productZodSchema.safeParse(req.body);
 
     if (!body.success) {
-      return errorResponse(res, 400, "Invalid Data.");
+      return errorResponse(res, 400, invalidData);
     }
 
     const data = body.data;
@@ -70,7 +71,7 @@ const addProduct = async (req, res) => {
     });
   } catch (error) {
     console.error("Add Product Error :", error);
-    errorResponse(res, 500, "Something is up with our server.");
+    errorResponse(res, 500, serverError);
   }
 };
 
@@ -79,7 +80,7 @@ const updateProduct = async (req, res) => {
     const body = productZodSchema.safeParse(req.body);
 
     if (!body.success) {
-      return errorResponse(res, 400, "Invalid Data.");
+      return errorResponse(res, 400, invalidData);
     }
 
     const data = body.data;
@@ -91,7 +92,7 @@ const updateProduct = async (req, res) => {
     const updatedProduct = findByIdAndUpdate({ _id: data._id }, {});
   } catch (error) {
     console.error("Update Product :", error);
-    errorResponse(res, 500, "Something is up with our server.");
+    errorResponse(res, 500, serverError);
   }
 };
 
