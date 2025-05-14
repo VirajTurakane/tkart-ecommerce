@@ -1,5 +1,5 @@
 import { Product } from "../models/productModel.js";
-import { errorResponse } from "../utils/constants/response.js";
+import { errorResponse } from "../utils/helpers/response.js";
 import {
   uploadFile,
   uploadMultipleFiles,
@@ -10,6 +10,7 @@ import {
   invalidData,
   thumbnailError,
   productCreated,
+  productNotFound,
 } from "../utils/constants/textConstants.js";
 
 const fetchProducts = async (req, res) => {
@@ -78,6 +79,11 @@ const addProduct = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const body = productZodSchema.safeParse(req.body);
+    const thumbnail = req.files["thumbnail"]?.[0] ?? "";
+    const images = req.files["images"] ?? [];
+    let imageURLs;
+
+    let url;
 
     if (!body.success) {
       return errorResponse(res, 400, invalidData);
@@ -85,15 +91,48 @@ const updateProduct = async (req, res) => {
 
     const data = body.data;
 
-    if (!updatedProduct) {
-      return errorResponse(res, 404, "Product not found.");
+    if (thumbnail) {
+      url = (await uploadFile(thumbnail.path)) ?? null;
     }
 
-    const updatedProduct = findByIdAndUpdate({ _id: data._id }, {});
+    if (images && images?.length > 0) {
+      const paths = images.map((image) => image.path);
+      imageURLs = await uploadMultipleFiles(paths);
+    }
+
+    const initialProduct = await Product.findById(data.id);
+
+    if (!initialProduct) {
+      return errorResponse(res, 404, productNotFound);
+    }
+
+    const newProduct = {
+      thumbnail: url ?? initialProduct.thumbnail,
+      imageURLs: imageURLs ?? initialProduct.imageURLs,
+      name: data.name ?? initialProduct.name,
+      description: data.description ?? initialProduct.description,
+      stock: data.stock ?? initialProduct.stock,
+      price: data.price ?? initialProduct.price,
+      discount: data.discount ?? initialProduct.discount,
+      variants: data.variants ?? initialProduct.variants,
+    };
+    const updatedProduct = await Product.findByIdAndUpdate(
+      data.id,
+      newProduct,
+      {
+        new: true,
+      }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Product updated.",
+      updatedProduct,
+    });
   } catch (error) {
     console.error("Update Product :", error);
     errorResponse(res, 500, serverError);
   }
 };
 
-export { fetchProducts, addProduct };
+export { fetchProducts, addProduct, updateProduct };

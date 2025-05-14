@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const productZodSchema = z.object({
+  id: z.string().optional(),
   thumbnail: z.string().optional(),
   imageURLs: z.array(z.string()).optional(),
   name: z.string(),

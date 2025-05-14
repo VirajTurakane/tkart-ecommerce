@@ -1,5 +1,5 @@
 import express from "express";
-import { addProduct, fetchProducts } from "../controllers/product.js";
+import { addProduct, fetchProducts, updateProduct } from "../controllers/product.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { upload } from "../middlewares/fileUpload.js";
 
@@ -14,6 +14,14 @@ router.post(
     { name: "images", maxCount: 10 },
   ]),
   addProduct
+);
+router.put(
+  "/update",
+  upload.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "images", maxCount: 10 },
+  ]),
+  updateProduct
 );
 
 export { router };

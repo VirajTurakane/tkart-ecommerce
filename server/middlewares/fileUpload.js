@@ -1,5 +1,5 @@
 import multer from "multer";
-import generateUniqueId from "../utils/uuid.js";
+import generateUniqueId from "../utils/helpers/uuid.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

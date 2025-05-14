@@ -1,8 +1,8 @@
 import { loginZodSchema, signupZodSchema } from "../schemas/user.js";
 import argon2 from "argon2";
-import jwtGenerate from "../utils/jwt.js";
-import findUserByEmail from "../utils/findUser.js";
-import { errorResponse } from "../utils/response.js";
+import jwtGenerate from "../utils/helpers/jwt.js";
+import findUserByEmail from "../utils/helpers/findUser.js";
+import { errorResponse } from "../utils/helpers/response.js";
 import { createUser } from "../services/userServices.js";
 import {
   serverError,

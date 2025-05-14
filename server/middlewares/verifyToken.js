@@ -1,17 +1,21 @@
 import jwt from "jsonwebtoken";
-import { errorResponse } from "../utils/response.js";
+import { errorResponse } from "../utils/helpers/response.js";
+import {
+  unauthorized,
+  invalidToken,
+} from "../utils/constants/textConstants.js";
 
 export const verifyToken = (req, res, next) => {
   try {
     const token = req.cookies.token;
 
     if (!token) {
-      return errorResponse(res, 401, "Unauthorized.");
+      return errorResponse(res, 401, unauthorized);
     }
 
     jwt.verify(token, process.env.JWT_SECRET, (err) => {
       if (err) {
-        return errorResponse(res, 401, "Token is invalid or expired.");
+        return errorResponse(res, 401, invalidToken);
       }
 
       next();
