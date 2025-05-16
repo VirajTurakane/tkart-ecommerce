@@ -23,7 +23,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    address: {
+    shippingAddress: {
+      type: String,
+      trim: true,
+    },
+    billingAddress: {
       type: String,
       trim: true,
     },

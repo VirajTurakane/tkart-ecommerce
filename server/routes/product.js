@@ -1,5 +1,10 @@
 import express from "express";
-import { addProduct, deleteProduct, fetchProducts, updateProduct } from "../controllers/product.js";
+import {
+  addProduct,
+  deleteProduct,
+  fetchProducts,
+  updateProduct,
+} from "../controllers/product.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { upload } from "../middlewares/fileUpload.js";
 
@@ -27,6 +32,6 @@ router.put(
   updateProduct
 );
 
-router.delete("/delete", deleteProduct)
+router.delete("/delete", deleteProduct);
 
 export { router };

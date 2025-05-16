@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { router as userRoutes } from "./routes/user.js";
 import { router as productRoutes } from "./routes/product.js";
+import { router as orderRoutes } from "./routes/order.js";
 
 const app = express();
 
@@ -15,7 +16,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
@@ -23,5 +24,6 @@ app.use(
 // Routes
 app.use("/api/v1/", userRoutes);
 app.use("/api/v1/", productRoutes);
+app.use("/api/v1/", orderRoutes);
 
 export default app;

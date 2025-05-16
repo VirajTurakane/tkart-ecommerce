@@ -12,8 +12,9 @@ import {
   wrongPassword,
   userNotExist,
   userExists,
+  invalidToken,
 } from "../utils/constants/textConstants.js";
-import { setTokenCookie } from "../utils/helpers/setTokenCookie.js";
+import { setTokenCookie, setUserCookie } from "../utils/helpers/setCookies.js";
 
 const signup = async (req, res) => {
   try {
@@ -34,19 +35,19 @@ const signup = async (req, res) => {
       return errorResponse(res, 409, userExists);
     }
 
-    await createUser(data);
+    const newUser = await createUser(data);
 
     const token = jwtGenerate({ name, email });
 
-    setTokenCookie(token);
+    setTokenCookie(res, token);
+
+    setUserCookie(res, newUser._id, newUser.email);
 
     return res.status(201).json({
       success: true,
       message: profileCreated,
-      user: {
-        name: name,
-        email: email,
-      },
+      id: newUser._id,
+      email: newUser.email,
     });
   } catch (error) {
     console.error("Signup Error:", error);
@@ -84,15 +85,15 @@ const login = async (req, res) => {
 
     const token = jwtGenerate({ name, email });
 
-    setTokenCookie(token);
+    setTokenCookie(res, token);
+
+    setUserCookie(res, user._id, user.email);
 
     return res.status(200).json({
       success: true,
       message: loginSuccess,
-      user: {
-        name: name,
-        email: email,
-      },
+      id: user._id,
+      email: user.email,
     });
   } catch (error) {
     console.error("Login Error:", error);
@@ -100,4 +101,39 @@ const login = async (req, res) => {
   }
 };
 
-export { signup, login };
+const logout = (req, res) => {
+  try {
+    res.clearCookie("token", { path: "/" });
+    res.clearCookie("id", { path: "/" });
+    res.clearCookie("email", { path: "/" });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    console.error("Logout Error :", error);
+    return errorResponse(res, 500, "Something went wrong.");
+  }
+};
+
+const isLogin = (req, res) => {
+  try {
+    const token = req.cookies.token;
+    const id = req.cookies.id;
+    const email = req.cookies.email;
+
+    if (!token) return errorResponse(res, 401, invalidToken);
+
+    return res.status(200).json({
+      success: true,
+      id: id,
+      email: email,
+    });
+  } catch (error) {
+    console.error("Is Login Error :", error);
+    return errorResponse(res, 500, serverError);
+  }
+};
+
+export { signup, login, isLogin, logout };
