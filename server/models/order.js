@@ -31,6 +31,22 @@ const order = mongoose.Schema({
     required: true,
     default: 1,
   },
+  cancellation: {
+    isCancelled: Boolean,
+    cancelledAt: {
+      type: Date,
+    },
+  },
+  return: {
+    isReturned: Boolean,
+    returnedAt: {
+      type: Date,
+    },
+    reason: {
+      type: String,
+      trim: true,
+    },
+  },
 });
 
 const Order = mongoose.model("orders", order);

@@ -123,7 +123,10 @@ const isLogin = (req, res) => {
     const id = req.cookies.id;
     const email = req.cookies.email;
 
-    if (!token) return errorResponse(res, 401, invalidToken);
+    if (!token && !id && !email) return res.status(200).json({
+      success: false,
+      msg: "User is not logged in."
+    });
 
     return res.status(200).json({
       success: true,

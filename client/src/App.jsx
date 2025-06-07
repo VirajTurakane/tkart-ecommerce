@@ -1,21 +1,37 @@
-import { Route, Routes } from "react-router-dom";
-import DashboardPage from "./pages/DashboardPage";
-import LoginPage from "./pages/LoginPage";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { fetchAuth } from "./features/auth/authSlice";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchAuth());
+  }, [dispatch]);
+
+  const appRouter = createBrowserRouter([
+    {
+      path: "/",
+      element: <Home />,
+    },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/signup",
+      element: <Signup />,
+    },
+  ]);
+
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />}></Route>
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
-        }
-      ></Route>
-    </Routes>
+    <>
+      <RouterProvider router={appRouter} />
+    </>
   );
 }
 

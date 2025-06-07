@@ -50,4 +50,30 @@ const orderProducts = async (req, res) => {
   }
 };
 
-export { orderProducts };
+const returnProduct = async (req, res) => {
+  try {
+    const body = orderZodSchema.safeParse(req.body);
+
+    if (!body.success) {
+      return errorResponse(res, 400, invalidData);
+    }
+
+    const data = body.data;
+    const returnedProduct = await Order.findById(data.id);
+      // {
+      //     return: {
+      //       isReturned: true,
+      //       reason: data.reason,
+      //     },
+      // },
+    return res.status(200).json({
+      success: true,
+      returnedProduct,
+    });
+  } catch (error) {
+    console.log("Return Product Error :", error);
+    return errorResponse(res, 500, serverError);
+  }
+};
+
+export { orderProducts, returnProduct };
