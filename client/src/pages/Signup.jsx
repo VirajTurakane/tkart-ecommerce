@@ -40,7 +40,7 @@ const Signup = () => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col w-full h-full">
       <SignupForm
         signupHandler={signupHandler}
         register={register}

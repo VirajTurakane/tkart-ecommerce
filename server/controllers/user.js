@@ -110,6 +110,8 @@ const logout = (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Logged out successfully",
+      id: null,
+      email: null,
     });
   } catch (error) {
     console.error("Logout Error :", error);
@@ -123,10 +125,11 @@ const isLogin = (req, res) => {
     const id = req.cookies.id;
     const email = req.cookies.email;
 
-    if (!token && !id && !email) return res.status(200).json({
-      success: false,
-      msg: "User is not logged in."
-    });
+    if (!token && !id && !email)
+      return res.status(200).json({
+        success: false,
+        msg: "User is not logged in.",
+      });
 
     return res.status(200).json({
       success: true,

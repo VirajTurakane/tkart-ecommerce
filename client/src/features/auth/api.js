@@ -24,3 +24,10 @@ export const postSignupRoute = async (user) => {
 
   return res.data;
 };
+
+export const getLogutRoute = async () => {
+  const res = await axios.get(url + "logout", {
+    withCredentials: true,
+  });
+  return res.data;
+};

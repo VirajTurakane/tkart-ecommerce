@@ -4,6 +4,7 @@ import { login } from "../features/auth/authSlice.js";
 import { useNavigate } from "react-router-dom";
 import LoginForm from "../components/LoginForm.jsx";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const Login = () => {
   const { register, handleSubmit } = useForm();
@@ -13,21 +14,20 @@ const Login = () => {
   const { auth } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (auth && auth.success) {
-      navigate("/");
+    if (auth?.success && auth?.email && auth?.id) {
+      toast.success(auth.message);
+      console.log(auth);
+      
+      navigate("/", { replace: true });
     }
   }, [auth, navigate]);
 
-  function loginHandler(data) {
-    const email = data.email;
-    const password = data.password;
+  const loginHandler = (data) => {
+    dispatch(login({ email: data.email, password: data.password }));
+  };
 
-    dispatch(login({ email, password }));
-
-    navigate("/");
-  }
   return (
-    <div>
+    <div className="flex flex-col w-full h-full">
       <LoginForm
         loginHandler={loginHandler}
         register={register}

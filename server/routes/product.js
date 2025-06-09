@@ -10,9 +10,9 @@ import { upload } from "../middlewares/fileUpload.js";
 
 const router = express.Router();
 
-router.use(verifyToken);
-
 router.get("/products", fetchProducts);
+
+router.use(verifyToken);
 
 router.post(
   "/add",
