@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { fetchAuth } from "./features/auth/authSlice";
-import { fetchProducts } from "./features/product/productSlice";
+import { fetchProducts } from "./features/product/thunks.js";
 import Loader from "./components/shared/Loader";
 import Navbar from "./components/shared/Navbar";
 import AppRoutes from "./AppRoutes";
@@ -16,18 +16,17 @@ function App() {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  console.log("App.jsx Rerendered");
-  if (authStatus || productStatus) return <Loader />;
+  if (authStatus || productStatus) {
+    return <Loader />;
+  } else {
+    return (
+      <div className="flex flex-col w-screen h-screen">
+        <Navbar />
 
-  return (
-    <div className="flex flex-col w-screen h-screen">
-      {authStatus && <Loader />}
-      {productStatus && <Loader />}
-      <Navbar />
-
-      <AppRoutes />
-    </div>
-  );
+        <AppRoutes />
+      </div>
+    );
+  }
 }
 
 export default App;

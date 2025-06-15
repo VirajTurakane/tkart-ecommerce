@@ -1,4 +1,4 @@
-import { Product } from "../models/productModel.js";
+import { Product } from "../models/product.js";
 import { errorResponse } from "../utils/helpers/response.js";
 import {
   uploadFile,
@@ -29,6 +29,26 @@ const fetchProducts = async (req, res) => {
   } catch (error) {
     console.error("Fetch Products Error:", error);
     return errorResponse(res, 500, serverError);
+  }
+};
+
+const fetchProductById = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return errorResponse(res, 404, productNotFound);
+    }
+
+    return res.status(200).json({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    console.log("Fetch Products Error:", error);
+    errorResponse(res, 500, serverError);
   }
 };
 
@@ -165,4 +185,10 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-export { fetchProducts, addProduct, updateProduct, deleteProduct };
+export {
+  fetchProductById,
+  fetchProducts,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+};

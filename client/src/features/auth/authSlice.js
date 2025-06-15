@@ -49,6 +49,7 @@ const authSlice = createSlice({
     });
     builder.addCase(fetchAuth.rejected, (state, action) => {
       state.loading = false;
+      state.auth = null;
       state.error = action.error.message;
     });
 
@@ -79,7 +80,7 @@ const authSlice = createSlice({
     builder.addCase(logout.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(logout.fulfilled, (state, action) => {
+    builder.addCase(logout.fulfilled, (state) => {
       state.loading = false;
       state.auth = null;
       state.error = null;

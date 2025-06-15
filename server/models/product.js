@@ -40,7 +40,7 @@ const product = mongoose.Schema(
     },
     raters: {
       type: Number,
-      default: 0,
+      default: 1,
     },
     variants: [
       {

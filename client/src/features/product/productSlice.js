@@ -1,16 +1,13 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchProductsRoute } from "./api";
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchProductById, fetchProducts } from "./thunks.js";
 
 const initialState = {
   product: null,
   loading: false,
   error: null,
+  singleProduct: null,
+  singleProductLoading: false
 };
-
-export const fetchProducts = createAsyncThunk("/fetch/products", async () => {
-  const res = await fetchProductsRoute();
-  return res;
-});
 
 const productSlice = createSlice({
   initialState,
@@ -26,6 +23,18 @@ const productSlice = createSlice({
     });
     builder.addCase(fetchProducts.rejected, (state, action) => {
       state.loading = false;
+      state.error = action.error.message;
+    });
+
+    builder.addCase(fetchProductById.pending, (state) => {
+      state.singleProductLoading = true;
+    });
+    builder.addCase(fetchProductById.fulfilled, (state, action) => {
+      state.singleProduct = action.payload;
+      state.singleProductLoading = false;
+    });
+    builder.addCase(fetchProductById.rejected, (state, action) => {
+      state.singleProductLoading = false;
       state.error = action.error.message;
     });
   },

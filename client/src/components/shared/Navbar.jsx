@@ -9,6 +9,7 @@ import {
   Menu,
   Logout,
   CloseCircle,
+  Heart,
 } from "iconsax-reactjs";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -31,16 +32,13 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const logoutHandler = () => {
     dispatch(logout());
-  };
+    toast.success("Logged out successfully");
 
-  useEffect(() => {
-    if (!auth) {
-      toast.success("Logged out successfully");
-      navigate("/", { replace: true });
-    }
-  }, [auth]);
+    navigate("/", { replace: true });
+  };
 
   return (
     <div className="flex flex-col items-center justify-center w-full gap-4 py-4 md:mx-auto">
@@ -51,7 +49,7 @@ const Navbar = () => {
             TKart
           </div>
         </Link>
-        <div className="flex items-center gap-2 justify-end w-[60%]">
+        <div className="flex items-center gap-2 justify-end w-[80%]">
           <div className="w-[50%]">
             <Input
               icon={<SearchNormal size="22" color="#555555" />}
@@ -80,12 +78,16 @@ const Navbar = () => {
           </div>
           <div className="items-center hidden gap-4 md:flex">
             <div className="flex items-center">
-              <Link className="my-border" to={"/"}>
+              <Link className="my-border" to={"/orders"}>
                 <Box size="22" color="#555555" /> <div>Orders</div>
               </Link>
-              <Link className="my-border" to={"/"}>
+              <Link className="my-border" to={"/cart"}>
                 <ShoppingCart size="22" color="#555555" />
                 <div>Cart</div>
+              </Link>
+              <Link className="my-border" to={"/wishlist"}>
+                <Heart size="22" color="#555555" />
+                <div>Wishlist</div>
               </Link>
             </div>
             {auth && auth.id ? (
@@ -133,7 +135,7 @@ const Navbar = () => {
       </div>
       {/* Responsive div */}
       <div
-        className={`absolute top-20 bg-primary-200 overflow-hidden border-0 pt-2 rounded-b-2xl flex flex-col items-start self-start justify-start w-full md:hidden px-4 gap-2 transition-all duration-700 ease-linear ${
+        className={`absolute top-20 bg-primary-200 overflow-hidden border-0 pt-2 pb-2 rounded-b-2xl flex flex-col items-start self-start justify-start w-full md:hidden px-4 gap-2 transition-all duration-700 z-50 ease-linear ${
           toggle
             ? "max-h-full opacity-100 visible"
             : "max-h-0 opacity-0 invisible"
@@ -142,28 +144,45 @@ const Navbar = () => {
         <LinkTo
           icon={<Box size="22" color={twhite} />}
           text={"Orders"}
-          to={"/"}
+          to={"/orders"}
         />
         <Divider />
         <LinkTo
           icon={<ShoppingCart size="22" color={twhite} />}
           text={"Cart"}
-          to={"/"}
+          to={"/cart"}
+        />
+        <Divider />
+        <LinkTo
+          icon={<Heart size="22" color={twhite} />}
+          text={"Wishlist"}
+          to={"/wishlist"}
         />
         <Divider />
 
-        <LinkTo
-          icon={<Login size="22" color={twhite} />}
-          text={"Login"}
-          to={"/login"}
-        />
-        <Divider />
-        <LinkTo
-          icon={<UserAdd size="22" color={twhite} />}
-          text={"Signup"}
-          to={"/signup"}
-        />
-        <Divider />
+        {!auth && (
+          <div>
+            <LinkTo
+              icon={<Login size="22" color={twhite} />}
+              text={"Login"}
+              to={"/login"}
+            />
+            <Divider />
+          </div>
+        )}
+        {!auth && (
+          <LinkTo
+            icon={<UserAdd size="22" color={twhite} />}
+            text={"Signup"}
+            to={"/signup"}
+          />
+        )}
+        {auth && (
+          <div className="my-border hover:border-0" onClick={logoutHandler}>
+            <Logout size="22" color={twhite} />{" "}
+            <span className="text-twhite">Logout</span>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,23 +1,35 @@
 import Card from "@/components/shared/Card";
 import { twhite } from "@/constants/colorConstants";
+import { selectWishlist } from "@/features/wishlist/selector";
+import { fetchWishlist } from "@/features/wishlist/thunks";
 import { Add } from "iconsax-reactjs";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const Home = () => {
-  const { product, loading } = useSelector((state) => state.product);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(product);
-  }, [product]);
+    dispatch(fetchWishlist());
+  }, [dispatch]);
+
+  const { product, loading } = useSelector((state) => state.product);
+  const wishlist = useSelector(selectWishlist);
 
   if (!loading)
     return (
       <div className="w-screen h-screen">
-        <div className="grid grid-cols-2 gap-2 p-2 md:px-10 md:gap-4 lg:gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        <div className="z-0 grid grid-cols-2 gap-2 p-2 md:px-10 md:gap-4 lg:gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {product?.products.map((product) => {
+            const isAdded = wishlist?.some(
+              (element) => element.product._id === product._id
+            );
+
             return (
               <Card
+                key={product._id}
+                isAddedToWishlist={isAdded ? true : false}
+                id={product._id}
                 price={product.price}
                 thumbnail={product.thumbnail}
                 discount={product.discount}

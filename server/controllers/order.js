@@ -5,7 +5,7 @@ import {
   productNotFound,
   serverError,
 } from "../utils/constants/textConstants.js";
-import { Product } from "../models/productModel.js";
+import { Product } from "../models/product.js";
 import { Order } from "../models/order.js";
 import { User } from "../models/user.js";
 

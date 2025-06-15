@@ -1,13 +1,15 @@
 import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
+import Loader from "./shared/Loader";
 
 const ProtectedRoute = ({ children }) => {
-  const { auth } = useSelector((state) => state.auth);
+  const { auth, loading } = useSelector((state) => state.auth);
 
-  if (!auth?.success) {
+  if (loading) return <Loader />;
+
+  if (!auth || !auth.id || !auth.email) {
     return <Navigate to="/login" replace />;
   }
-
   return children;
 };
 

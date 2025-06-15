@@ -22,6 +22,7 @@ export const loginSuccess = "Login successful.";
 // Error constants
 export const thumbnailError = "Thumbnail file not uploaded.";
 export const productNotFound = "Product not found.";
+export const wishlistNotFound = "Wishlist not found.";
 
 // Success constants
 export const productCreated = "Product created successfully.";

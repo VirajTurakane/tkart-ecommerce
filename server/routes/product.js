@@ -2,6 +2,7 @@ import express from "express";
 import {
   addProduct,
   deleteProduct,
+  fetchProductById,
   fetchProducts,
   updateProduct,
 } from "../controllers/product.js";
@@ -11,6 +12,7 @@ import { upload } from "../middlewares/fileUpload.js";
 const router = express.Router();
 
 router.get("/products", fetchProducts);
+router.get("/product/:id", fetchProductById);
 
 router.use(verifyToken);
 
