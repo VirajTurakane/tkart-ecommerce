@@ -169,7 +169,7 @@ const Navbar = () => {
           to={"/wishlist"}
         />
         <Divider />
-        {!auth.success && (
+        {!auth?.success && (
           <div>
             <LinkTo
               icon={<Login size="22" color={twhite} />}
@@ -178,9 +178,9 @@ const Navbar = () => {
             />
           </div>
         )}
-        {!auth.success && <Divider />}
+        {!auth?.success && <Divider />}
 
-        {!auth.success && (
+        {!auth?.success && (
           <LinkTo
             icon={<UserAdd size="22" color={twhite} />}
             text={"Signup"}
