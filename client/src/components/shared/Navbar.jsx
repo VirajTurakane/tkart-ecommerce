@@ -170,7 +170,12 @@ const Navbar = () => {
         />
         <Divider />
 
-        {!auth && (
+        {auth && auth.id ? (
+          <div className="my-border hover:border-0" onClick={logoutHandler}>
+            <Logout size="22" color={twhite} />{" "}
+            <span className="text-twhite">Logout</span>
+          </div>
+        ) : (
           <div>
             <LinkTo
               icon={<Login size="22" color={twhite} />}
@@ -178,19 +183,11 @@ const Navbar = () => {
               to={"/login"}
             />
             <Divider />
-          </div>
-        )}
-        {!auth && (
-          <LinkTo
-            icon={<UserAdd size="22" color={twhite} />}
-            text={"Signup"}
-            to={"/signup"}
-          />
-        )}
-        {auth && (
-          <div className="my-border hover:border-0" onClick={logoutHandler}>
-            <Logout size="22" color={twhite} />{" "}
-            <span className="text-twhite">Logout</span>
+            <LinkTo
+              icon={<UserAdd size="22" color={twhite} />}
+              text={"Signup"}
+              to={"/signup"}
+            />
           </div>
         )}
       </div>
