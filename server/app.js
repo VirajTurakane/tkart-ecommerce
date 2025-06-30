@@ -6,6 +6,9 @@ import { router as productRoutes } from "./routes/product.js";
 import { router as orderRoutes } from "./routes/order.js";
 import { router as wishlistRoutes } from "./routes/wishlist.js";
 import { router as cartRoutes } from "./routes/cart.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 
