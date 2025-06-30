@@ -3,8 +3,7 @@ import mongoose from "mongoose";
 const cart = mongoose.Schema({
   products: [
     {
-      type: mongoose.Types.ObjectId,
-      ref: "Product",
+      type: String,
     },
   ],
   addedAt: {
@@ -14,6 +13,10 @@ const cart = mongoose.Schema({
   quantity: {
     type: Number,
     default: 1,
+  },
+  userId: {
+    type: String,
+    require: true,
   },
 });
 

@@ -36,24 +36,6 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
-    cart: [
-      {
-        productId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Product", // Refers to a product model
-        },
-        quantity: {
-          type: Number,
-          default: 1,
-        },
-      },
-    ],
-    orders: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Order", // Refers to an order model
-      },
-    ],
   },
   { timestamps: true }
 );

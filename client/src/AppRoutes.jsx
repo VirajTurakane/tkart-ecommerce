@@ -8,6 +8,7 @@ import Wishlist from "./pages/Wishlist";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Orders from "./pages/Orders";
 import Product from "./pages/Product";
+import Order from "./pages/Order";
 
 const AppRoutes = () => {
   return (
@@ -40,6 +41,7 @@ const AppRoutes = () => {
         path="/cart"
       />
       <Route element={<Product />} path="/product/:id" />
+      <Route element={<Order />} path="/order/:id" />
 
       <Route element={<NotFound />} path="*" />
     </Routes>

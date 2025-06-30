@@ -12,10 +12,15 @@ import Rating from "./Rating";
 import { ArrowDown, Card, Heart } from "iconsax-reactjs";
 import { darkBlue } from "@/constants/colorConstants";
 import VariantCard from "./VariantCard";
-import TButton from "./TButton";
-import { ShoppingCart } from "iconsax-reactjs";
 import { addToWishlist, removeFromWishlist } from "@/features/wishlist/thunks";
 import { selectWishlist } from "@/features/wishlist/selector";
+import { toast } from "sonner";
+import {
+  addedToWishlist,
+  removedFromWishlist,
+} from "@/constants/textConstants";
+import AddToCartButton from "./AddToCartButton";
+import BuyNowButton from "./BuyNowButton";
 
 const DetailsCard = () => {
   const { id } = useParams();
@@ -28,10 +33,12 @@ const DetailsCard = () => {
 
   const addToWishlistHandler = (productId) => {
     dispatch(addToWishlist(productId));
+    toast.success(addedToWishlist);
   };
 
   const removeFromWishlistHandler = (productId) => {
     dispatch(removeFromWishlist(productId));
+    toast.success(removedFromWishlist);
   };
 
   const wishlist = useSelector(selectWishlist);
@@ -68,8 +75,7 @@ const DetailsCard = () => {
               </div>
               <div
                 className="self-start"
-                onClick={(e) => {
-                  e.stopPropagation();
+                onClick={() => {
                   if (!isAddedToWishlist) {
                     addToWishlistHandler(id);
                   } else {
@@ -128,12 +134,8 @@ const DetailsCard = () => {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <TButton
-              outlined={true}
-              icon={<ShoppingCart size={22} color={darkBlue} />}
-              text={"Add To Cart"}
-            />
-            <TButton icon={<Card />} text={"Buy Now"} />
+            <AddToCartButton productId={id} />
+            <BuyNowButton productId={id} />
           </div>
         </div>
       </div>

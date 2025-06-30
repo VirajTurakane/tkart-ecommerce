@@ -1,10 +1,15 @@
 import { darkBlue } from "@/constants/colorConstants";
+import {
+  addedToWishlist,
+  removedFromWishlist,
+} from "@/constants/textConstants";
 import { selectWishlist } from "@/features/wishlist/selector";
 import { addToWishlist, removeFromWishlist } from "@/features/wishlist/thunks";
 import { ArrowDown, Heart } from "iconsax-reactjs";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Card = ({
   id,
@@ -25,18 +30,19 @@ const Card = ({
 
   const addToWishlistHandler = (productId) => {
     dispatch(addToWishlist(productId));
+    toast.success(addedToWishlist);
   };
 
   const removeFromWishlistHandler = (productId) => {
     dispatch(removeFromWishlist(productId));
+    toast.success(removedFromWishlist);
   };
 
   return (
     <div className="relative w-auto transition-all duration-300 ease-linear shadow-xl rounded-xl hover:scale-105">
       <div
         className="absolute cursor-pointer top-1 right-1"
-        onClick={(e) => {
-          e.stopPropagation();
+        onClick={() => {
           if (!isAddedToWishlist) {
             addToWishlistHandler(id);
           } else {

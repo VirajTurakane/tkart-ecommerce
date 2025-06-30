@@ -8,6 +8,5 @@ export const fetchProductsRoute = async () => {
 
 export const fetchProductByIdRoute = async (id) => {
   const res = await axios.get(url + `product/${id}`);
-  console.log("fetchProductByIdRoute : ", res.data);
   return res.data;
 };

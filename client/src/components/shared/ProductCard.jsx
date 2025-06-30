@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from "react";
 import Carousel from "./Carousel";
 import Rating from "./Rating";
-import { ArrowDown, Card, Heart } from "iconsax-reactjs";
+import { ArrowDown, Heart } from "iconsax-reactjs";
 import { darkBlue } from "@/constants/colorConstants";
 import VariantCard from "./VariantCard";
-import TButton from "./TButton";
-import { ShoppingCart } from "iconsax-reactjs";
 import { useDispatch } from "react-redux";
 import { addToWishlist, removeFromWishlist } from "@/features/wishlist/thunks";
+import { toast } from "sonner";
+import {
+  addedToWishlist,
+  removedFromWishlist,
+} from "@/constants/textConstants";
+import AddToCartButton from "./AddToCartButton";
+import BuyNowButton from "./BuyNowButton";
+import RemoveFromCartButton from "./RemoveFromCart";
 
-const ProductCard = ({ product, isAddedToWishlist }) => {
+const ProductCard = ({ product, isAddedToWishlist, remove }) => {
   const [images, setImages] = useState([]);
   const dispatch = useDispatch();
 
   const removeFromWishlistHandler = (productId) => {
     dispatch(removeFromWishlist(productId));
+    toast.success(removedFromWishlist);
+  };
+
+  const addToWishlistHandler = (productId) => {
+    dispatch(addToWishlist(productId));
+    toast.success(addedToWishlist);
   };
 
   useEffect(() => {
@@ -41,7 +53,9 @@ const ProductCard = ({ product, isAddedToWishlist }) => {
               <div
                 className="self-start"
                 onClick={() => {
-                  removeFromWishlistHandler(product._id);
+                  isAddedToWishlist
+                    ? removeFromWishlistHandler(product._id)
+                    : addToWishlistHandler(product._id);
                 }}
               >
                 <Heart
@@ -88,12 +102,13 @@ const ProductCard = ({ product, isAddedToWishlist }) => {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <TButton
-              outlined={true}
-              icon={<ShoppingCart size={22} color={darkBlue} />}
-              text={"Add To Cart"}
-            />
-            <TButton icon={<Card />} text={"Buy Now"} />
+            {!remove ? (
+              <AddToCartButton productId={product._id} />
+            ) : (
+              <RemoveFromCartButton productId={product._id} />
+            )}
+
+            <BuyNowButton productId={product._id} />
           </div>
         </div>
       </div>

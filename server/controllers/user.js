@@ -12,9 +12,9 @@ import {
   wrongPassword,
   userNotExist,
   userExists,
-  invalidToken,
 } from "../utils/constants/textConstants.js";
 import { setTokenCookie, setUserCookie } from "../utils/helpers/setCookies.js";
+import { User } from "../models/user.js";
 
 const signup = async (req, res) => {
   try {
@@ -142,4 +142,15 @@ const isLogin = (req, res) => {
   }
 };
 
-export { signup, login, isLogin, logout };
+const user = async (req, res) => {
+  const id = req.cookies.id;
+
+  const user = await User.findById(id, { password: 0 });
+
+  return res.status(200).json({
+    success: true,
+    user,
+  });
+};
+
+export { signup, login, isLogin, logout, user };

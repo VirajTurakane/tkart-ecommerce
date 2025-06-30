@@ -35,6 +35,15 @@ const orderProducts = async (req, res) => {
       shippingAddress: customer.shippingAddress,
       billingAddress: customer.billingAddress,
       quantity: data.quantity,
+      cancellation: {
+        isCancelled: false,
+        cancelledAt: Date.now(),
+      },
+      return: {
+        isReturned: false,
+        returnedAt: Date.now(),
+        reason: "",
+      },
     });
 
     const savedOrder = await order.save();
@@ -52,28 +61,70 @@ const orderProducts = async (req, res) => {
 
 const returnProduct = async (req, res) => {
   try {
-    const body = orderZodSchema.safeParse(req.body);
+    const orderId = req.body.id;
+    const reason = req.body.reason;
 
-    if (!body.success) {
-      return errorResponse(res, 400, invalidData);
-    }
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        return: {
+          isReturned: true,
+          returnedAt: Date.now(),
+          reason: reason,
+        },
+      },
+      { new: true }
+    );
 
-    const data = body.data;
-    const returnedProduct = await Order.findById(data.id);
-      // {
-      //     return: {
-      //       isReturned: true,
-      //       reason: data.reason,
-      //     },
-      // },
     return res.status(200).json({
       success: true,
-      returnedProduct,
+      order,
     });
   } catch (error) {
-    console.log("Return Product Error :", error);
+    console.log("ReturnProduct Error :", error);
     return errorResponse(res, 500, serverError);
   }
 };
 
-export { orderProducts, returnProduct };
+const cancelOrder = async (req, res) => {
+  try {
+    const orderId = req.body.id;
+
+    const order = await Order.findByIdAndUpdate(
+      orderId,
+      {
+        cancellation: {
+          isCancelled: true,
+          cancelledAt: Date.now(),
+        },
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      order,
+    });
+  } catch (error) {
+    console.log("CancelOrder Error :", error);
+    return errorResponse(res, 500, serverError);
+  }
+};
+
+const fetchOrders = async (req, res) => {
+  try {
+    const userId = req.cookies.id;
+
+    const orders = await Order.find({ customerId: userId });
+
+    return res.status(200).json({
+      succes: true,
+      orders,
+    });
+  } catch (error) {
+    console.log("FetchOrders Error :", error);
+    return errorResponse(res, 500, serverError);
+  }
+};
+
+export { orderProducts, returnProduct, cancelOrder, fetchOrders };

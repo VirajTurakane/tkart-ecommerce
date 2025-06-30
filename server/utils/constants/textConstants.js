@@ -23,8 +23,9 @@ export const loginSuccess = "Login successful.";
 export const thumbnailError = "Thumbnail file not uploaded.";
 export const productNotFound = "Product not found.";
 export const wishlistNotFound = "Wishlist not found.";
+export const cartNotFound = "Cart not found.";
 
 // Success constants
 export const productCreated = "Product created successfully.";
 export const productUpdated = "Product updated successfully.";
-export const productDeleted = "Product deleted successfully."
+export const productDeleted = "Product deleted successfully.";

@@ -5,6 +5,7 @@ import { fetchProducts } from "./features/product/thunks.js";
 import Loader from "./components/shared/Loader";
 import Navbar from "./components/shared/Navbar";
 import AppRoutes from "./AppRoutes";
+import Footer from "./components/shared/Footer";
 
 function App() {
   const dispatch = useDispatch();
@@ -16,17 +17,17 @@ function App() {
     dispatch(fetchProducts());
   }, [dispatch]);
 
-  if (authStatus || productStatus) {
-    return <Loader />;
-  } else {
-    return (
-      <div className="flex flex-col w-screen h-screen">
-        <Navbar />
+  if (authStatus || productStatus) return <Loader />;
 
+  return (
+    <div className="flex flex-col w-full min-h-screen">
+      <Navbar />
+      <main className="flex-grow pb-40">
         <AppRoutes />
-      </div>
-    );
-  }
+      </main>
+      <Footer />
+    </div>
+  );
 }
 
 export default App;

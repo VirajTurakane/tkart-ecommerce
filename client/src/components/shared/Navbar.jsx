@@ -10,6 +10,7 @@ import {
   Logout,
   CloseCircle,
   Heart,
+  Home,
 } from "iconsax-reactjs";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -78,6 +79,9 @@ const Navbar = () => {
           </div>
           <div className="items-center hidden gap-4 md:flex">
             <div className="flex items-center">
+              <Link className="my-border" to={"/"}>
+                <Home size="22" color="#555555" /> <div>Home</div>
+              </Link>
               <Link className="my-border" to={"/orders"}>
                 <Box size="22" color="#555555" /> <div>Orders</div>
               </Link>
@@ -141,6 +145,12 @@ const Navbar = () => {
             : "max-h-0 opacity-0 invisible"
         }`}
       >
+        <LinkTo
+          icon={<Home size="22" color={twhite} />}
+          text={"Home"}
+          to={"/"}
+        />
+        <Divider />
         <LinkTo
           icon={<Box size="22" color={twhite} />}
           text={"Orders"}
