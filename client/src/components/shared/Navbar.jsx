@@ -178,7 +178,7 @@ const Navbar = () => {
             />
           </div>
         )}
-        {!auth && <Divider />}
+        {!auth.success && <Divider />}
 
         {!auth.success && (
           <LinkTo
