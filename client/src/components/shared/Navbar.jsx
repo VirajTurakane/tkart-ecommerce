@@ -176,7 +176,7 @@ const Navbar = () => {
             <span className="text-twhite">Logout</span>
           </div>
         ) : (
-          <div>
+          <div className="w-full">
             <LinkTo
               icon={<Login size="22" color={twhite} />}
               text={"Login"}
