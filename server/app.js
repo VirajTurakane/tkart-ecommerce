@@ -22,6 +22,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: "https://tkart-ecommerce-app.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
